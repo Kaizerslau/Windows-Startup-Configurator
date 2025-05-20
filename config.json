@@ -1,0 +1,20 @@
+[
+    {
+        "Name": "Example Program 1",
+        "Path": "%USERPROFILE%\\AppData\\Local\\ExampleApp\\ExampleApp.exe",
+        "Delay": 5,
+        "Enabled": true
+    },
+    {
+        "Name": "Example Program 2",
+        "Path": "%PROGRAMFILES(X86)%\\ExampleSoftware\\ExampleSoftware.exe",
+        "Delay": 10,
+        "Enabled": true
+    },
+    {
+        "Name": "Example Program 3 (Disabled)",
+        "Path": "C:\\Path\\To\\Another\\Program.exe",
+        "Delay": 0,
+        "Enabled": false
+    }
+]
