@@ -16,6 +16,7 @@ import os
 import winreg
 from typing import Optional
 from win10toast import ToastNotifier
+import time
 
 class Uninstaller:
     """Handles program uninstallation by removing registry entries."""
@@ -76,7 +77,7 @@ def main() -> None:
     except Exception as e:
         print(f"Fatal error: {str(e)}")
     finally:
-        input("Press Enter to exit...")
+        time.sleep(5)
 
 if __name__ == "__main__":
     main() 
