@@ -14,6 +14,8 @@ License: Apache License 2.0
 import os
 import sys
 import winreg
+import time
+import subprocess
 from typing import Optional
 from win10toast import ToastNotifier
 
@@ -81,21 +83,19 @@ class AutostartManager:
         """
         self._show_notification(f"Error: {title}", message)
     
-    def register(self) -> bool:
+    def register(self, executable_path: str) -> bool:
         """
         Register the program for autostart in Windows Registry.
+        
+        Args:
+            executable_path (str): Full path to the executable to register.
         
         Returns:
             bool: True if registration was successful, False otherwise
         """
         try:
-            script_path = self._get_script_path()
-            if not script_path:
-                return False
-            
-            # Create the command to run the script with Python
-            python_exe = sys.executable
-            command = f'"{python_exe}" "{script_path}"'
+            # Create the command to run the executable directly
+            command = f'"{executable_path}"'
             
             # Open the registry key
             key = winreg.OpenKey(
@@ -134,14 +134,36 @@ def main() -> None:
     """Main entry point of the script."""
     try:
         manager = AutostartManager()
-        if manager.register():
-            print("Program successfully registered for autostart")
+
+        # Determine the path to WindowsStartupConfigurator.exe relative to register_task.exe
+        startup_executable_path = os.path.join(os.path.dirname(sys.executable), 'WindowsStartupConfigurator.exe')
+
+        # Check if the executable exists
+        if not os.path.exists(startup_executable_path):
+             manager._show_error(
+                "Executable not found",
+                f"Could not find: {startup_executable_path}"
+             )
+             print(f"Error: {startup_executable_path} not found.")
+             # Add a small delay before exiting so the user can see the message
+             time.sleep(5)
+             return # Exit if the file is not found
+
+
+        # Register WindowsStartupConfigurator.exe for autostart
+        if manager.register(startup_executable_path):
+            print(f"Program {startup_executable_path} successfully registered for autostart")
         else:
             print("Failed to register program for autostart")
+
+        # Keep the window open briefly to show messages
+        time.sleep(5)
+
     except Exception as e:
         print(f"Fatal error: {str(e)}")
-    finally:
-        input("Press Enter to exit...")
+        # Also add a delay for fatal errors
+        time.sleep(10)
+
 
 if __name__ == "__main__":
     main() 
